@@ -1,0 +1,77 @@
+html, body {
+    padding: 0px;
+    padding-left: 5px;
+    background-color: rgb(235, 235, 235);
+}
+.input, .message{
+    width: 35%;
+    margin: 10px 0px;
+}
+#editorjs {
+    background-color: white;
+    box-shadow: 1px 2px 5px rgb(170, 170, 170);
+    margin: 10px 0px;
+    border-radius: 4px;
+}
+#editor-container, #tabs-container {
+    width: 100%;
+    height: 100%;
+}
+#tabs-outer-container {
+    display: grid;
+    column-gap: 7px;
+    grid-template-columns: 65% max-content;
+}
+#tabs-container > div {
+    display: inline-block;
+    height: 100%;
+}
+#tabs-container {
+    overflow-y: scroll;
+    padding: 0px;
+}
+.tab {
+    width: auto;
+    /* position: relative; */
+}
+.hv {
+    width: 1px;
+    background-color: rgb(201, 200, 200);
+}
+tr {
+    border-bottom: 1px solid rgb(201, 200, 200);
+    height: 10px;
+}
+tr > * {
+    padding: 10px;
+}
+.white {
+    background-color: white;
+}
+table {
+    width: 100%;
+    text-align: center;
+}
+.no-margin {
+    margin: 0px;
+}
+button {
+    margin: 2px 8px;
+}
+select {
+    display: block;
+} 
+
+.radio_to_hide {
+    opacity: 0;
+}
+input[type="radio"]:checked + label {
+    color: blue;
+}
+.highlight-detect {
+    background-color: yellow;
+    padding: 3px 0;
+}
+#toggle-button-div {
+    text-align: right;
+}

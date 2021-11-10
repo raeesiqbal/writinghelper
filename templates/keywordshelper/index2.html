@@ -1,0 +1,210 @@
+{% extends 'keywordshelper/layout2.html' %} {% load static %} {% block title %}
+Home Page
+{%endblock title %} {% block main %}
+
+
+<section class="submit-recipe-page-wrap padding-top-74 padding-bottom-50">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12 detect">
+                <div class="submit-recipe-form">
+                    <div class="form-group">
+                        <label>Choose Website</label>
+                        <select style="width:100%;" class="select2" id="website">
+                            {% for website in websites %}
+                            <option value="{{ website.website.id }}">{{ website.website.name  }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Keyword</label>
+                        <input type="text" placeholder="Enter main keyword" class="form-control" id="main_keyword">
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-5 mt-4">
+                                <select style="width:100%;" class="select2" id="selectSearch">
+                                    <option selected>partial search</option>
+                                    <option>exact search</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5 mt-4">
+                                <button style="width:100%" class=" btn btn-dark btn-lg" id="pasteText"
+                                    onclick="pasteText()">paste</button>
+                            </div>
+                            <div class="col-md-2 mt-4">
+                                <div style="width:100%" clas="float-right" id="showCount"> Total Count: 0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Results</label>
+                        <div id="paragraph"></div>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Database Keywords</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            {% comment %} <div class="col-md-3">
+                <button type="button" class="btn-submit ">Update Cache</button>
+            </div> {% endcomment %}
+            <div class="col-md-4">
+                <button onclick="get_keywords();" type="button" class="btn-submit ">Get
+                    Keywords</button>
+            </div>
+            <div class="col-md-4">
+                <button type="button" class="btn-submit ">Get Aticles</button>
+            </div>
+            <div class="col-md-4">
+                <button id="search" type="button" class="btn-submit ">Detect</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock main %}
+{% block javascript %}
+
+<script>
+    function get_keywords() {
+        document.querySelector('#tbody').innerHTML = '';
+        get_keyword = document.querySelector('#main_keyword').value;
+        get_website = document.querySelector('#website').value;
+        search_type = $('#selectSearch').find(":selected").text();
+        console.log('search type', search_type)
+        if (get_keyword != '' && get_website != '') {
+            console.log(get_keyword);
+            console.log(get_website);
+
+            fetch('/get_keywords/', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        website: get_website,
+                        keyword: get_keyword,
+                        search_type: search_type,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data["error"]) {
+                        console.log("error")
+                    } else {
+
+                        for (x in data) {
+                            $('#tbody').append($(
+                                `
+                                    <tr style="background-color:red">
+                                        <td>${x}</td>
+                                    </tr>
+                                    `
+                            ));
+                            for (i in data[x]) {
+                                $('#tbody').append($(
+                                    `
+                                        <tr>
+                                            <td>${data[x][i]}</td>
+                                        </tr>
+                                        `
+                                ));
+                            }
+
+                        }
+
+                    }
+                });
+        } else {
+            console.log('empty')
+        }
+    }
+
+    function countWord(string, word) {
+        return string.split(word).length - 1;
+    }
+
+    function countExactWord(string, word) {
+        return string.split(new RegExp("\\b" + word + "\\b")).length - 1;
+    }
+
+    $(document).ready(function () {
+        $('#search').click(function () {
+            document.querySelector('#showCount').innerHTML = '';
+            var searchTexts = $('#main_keyword').val();
+            if (searchTexts != "") {
+                var para = $('#paragraph').text();
+                var count = 0;
+                var searchTextArr = searchTexts.split(",");
+                var newPara = para;
+                var selectedSearchVal = $('#selectSearch').val();
+
+                if (selectedSearchVal == "partial search") {
+                    for (var i = 0; i < searchTextArr.length; i++) {
+                        var searchText = searchTextArr[i];
+                        count += countWord(para, searchText);
+                        if (count != 0) {
+                            var randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+                            if (randomColor == "#ffffff" || randomColor.length != 7) {
+                                newPara = newPara.replace(new RegExp(searchText, 'g'),
+                                    "<span style='color:#fff; background-color:#000000;'>" +
+                                    searchText + "</span>");
+                            } else {
+                                newPara = newPara.replace(new RegExp(searchText, 'g'),
+                                    "<span style='color:#fff; background-color:" +
+                                    randomColor + ";'>" + searchText + "</span>");
+                            }
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < searchTextArr.length; i++) {
+                        var searchText = searchTextArr[i];
+                        count += countExactWord(para,
+                            searchText);
+                        if (count != 0) {
+                            var randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+                            if (randomColor == "#ffffff" || randomColor.length != 7) {
+                                newPara = newPara.replace(new RegExp("\\b" + searchText + "\\b", 'g'),
+                                    "<span style='color:#fff; background-color:#000000;'>" +
+                                    searchText + "</span>");
+                            } else {
+                                newPara = newPara.replace(new RegExp("\\b" + searchText + "\\b", 'g'),
+                                    "<span style='color:#fff; background-color:" + randomColor +
+                                    ";'>" + searchText + "</span>");
+                            }
+                        }
+                    }
+                }
+                $('#showCount').append($(
+                    `
+                    <p>Total Count: ${count}</p>
+                `
+                ));
+                $('#paragraph').text("");
+                $('#paragraph').append(newPara);
+            }
+        });
+    });
+
+    async function pasteText() {
+        const text = await navigator.clipboard.readText();
+        $('#paragraph').text(text);
+    }
+</script>
+
+{% endblock javascript %}

@@ -1,0 +1,83 @@
+{% load static %}
+
+<!-- Header Area Start Here -->
+<header class="header-one">
+    <div id="header-main-menu" class="header-main-menu header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-3 col-sm-4 col-4 possition-static">
+                    <div class="site-logo-mobile">
+                        <a href="index.html" class="sticky-logo-light"><img src="{% static 'js/main.js' %}"
+                                src="img/logo-light.png" alt="Site Logo" /></a>
+                        <a href="index.html" class="sticky-logo-dark"><img src="{% static 'js/main.js' %}" src=""
+                                alt="Site Logo" /></a>
+                    </div>
+                    <nav class="site-nav">
+                        {% if request.user.is_authenticated %}
+
+                        <ul id="site-menu" class="site-menu">
+                            <li class="nav-item">
+                                <a href="{% url 'index' %}">Index</a>
+                            </li>
+                            {% if request.user.is_superuser %}
+                            <li class="nav-item">
+                                <a href="{% url 'create_user' %}">Create user</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'admin:index' %}">Admin dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'upload_keywords' %}">Upload keywords</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>
+                </div>
+                <div class="
+                                col-lg-4 col-md-9 col-sm-8 col-8
+                                d-flex
+                                align-items-center
+                                justify-content-end
+                                ">
+                    <div class="nav-action-elements-layout1">
+                        <ul>
+                            {% if request.user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'logout' %}" class="login-btn" role="button"
+                                    aria-pressed="true">Logout<i class="flaticon-profile"></i></a>
+
+                                {% comment %}
+                                <button type="button" class="login-btn" data-toggle="modal" data-target="#myModal">
+                                    <i class="flaticon-profile"></i>Login
+                                </button>
+                                {% endcomment %}
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'login' %}" class="login-btn" role="button" aria-pressed="true">Login<i
+                                        class="flaticon-profile"></i></a>
+
+                                {% comment %}
+                                <button type="button" class="login-btn" data-toggle="modal" data-target="#myModal">
+                                    <i class="flaticon-profile"></i>Login
+                                </button>
+                                {% endcomment %}
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                    </div>
+                    <div class="mob-menu-open toggle-menu">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</header>
+<!-- Header Area End Here -->
